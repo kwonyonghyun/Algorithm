@@ -9,48 +9,52 @@ class Pair{
         this.cost = cost;
     }
 }
+
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int n=sc.nextInt();
-        int m=sc.nextInt();
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        ArrayList<Pair>[] graph = new ArrayList[n+1];
         int[] dist = new int[n+1];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        ArrayList<Pair>[] graph = new ArrayList[n+1];
-        for(int i=0;i<=n;i++){
+        for(int i=0;i<n+1;i++){
             graph[i]=new ArrayList<>();
         }
+
         for(int i=0;i<m;i++){
             int a=sc.nextInt();
             int b=sc.nextInt();
-            int cost=sc.nextInt();
-            graph[a].add(new Pair(b,cost));
-            graph[b].add(new Pair(a,cost));
+            int c=sc.nextInt();
+            graph[a].add(new Pair(b,c));
+            graph[b].add(new Pair(a,c));
         }
 
+        dist[1]=0;
         PriorityQueue<Pair> pq = new PriorityQueue<Pair>(
                 (Pair a, Pair b)->{
                     return a.cost-b.cost;
                 }
         );
-        dist[1]=0;
-        pq.add(new Pair(1, dist[1]));
+
+        pq.add(new Pair(1, 0));
 
         while(!pq.isEmpty()){
             Pair cur = pq.poll();
 
-            if(cur.cost > dist[cur.to]){
+            if(dist[cur.to]<cur.cost){
                 continue;
             }
 
             for(Pair next: graph[cur.to]){
-                int newDist = dist[cur.to] + next.cost;
-                if(newDist < dist[next.to]){
-                    dist[next.to] = newDist;
-                    pq.add(new Pair(next.to, dist[next.to]));
+                if(dist[next.to]>dist[cur.to]+next.cost){
+                    dist[next.to]=dist[cur.to]+next.cost;
+                    pq.add(new Pair(next.to, dist[cur.to]+next.cost));
                 }
             }
         }
         System.out.println(dist[n]);
+
     }
 }
